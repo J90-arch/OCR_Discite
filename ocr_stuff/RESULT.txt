@@ -1,0 +1,35 @@
+OUTPUT: [([[43, 13], [77, 13], [77, 31], [43, 31]], 'Zeme', 0.23900163173675537), ([[85, 15], [425, 15], [425, 33], [85, 33]], 'vienintele Visatoje mums zinoma vieta, kur yra gyvybe. Galbut', 0.003450733609497547), ([[31, 33], [421, 33], [421, 49], [31, 49]], 'kitose planetose irgi esamna gyvujy organizmnu, taciau jie dar neatrasti.', 3.0381770557141863e-05), ([[31, 48], [377, 48], [377, 67], [31, 67]], 'Mokslininkai tikisi, kad gal pavyks gyvybe aptikti Marse. Deja', 0.03905942663550377), ([[381, 51], [423, 51], [423, 65], [381, 65]], 'kol kas', 0.1457388550043106), ([[29, 67], [157, 67], [157, 83], [29, 83]], 'jy lukesciai neissipilde.', 0.4708949029445648), ([[41, 83], [111, 83], [111, 97], [41, 97]], 'leskantiems', 0.3989894688129425), ([[159, 83], [423, 83], [423, 99], [159, 99]], 'kitose planetose mokslininkams pirmiausia rupi', 0.03712446242570877), ([[108.21913119055696, 86.37530495244557], [159.93866975951673, 81.65518253732039], [160.78086880944304, 95.62469504755443], [109.06133024048327, 100.34481746267961]], 'gyvyhes', 0.10868795216083527), ([[45, 99], [141, 99], [141, 115], [45, 115]], 'jose yra vandens', 0.04014882445335388), ([[155, 99], [421, 99], [421, 117], [155, 117]], 'pav matyti, kad Pasaulio vandenynas dengia di-', 0.03526066616177559), ([[30, 115], [423, 115], [423, 133], [30, 133]], 'desne Zemes rutulio dalj, Mazdaug pries 3,8 mlrd. metu jame susidare', 0.0022008081432431936), ([[29, 131], [417, 131], [417, 151], [29, 151]], 'pirmieji gyvieji organizmai. Veliau jie isplito sausumoje, paskui pakilo', 0.025449540466070175), ([[63, 151], [227, 151], [227, 165], [63, 165]], 'isiviespatavo visoje planeloje.', 0.028067223727703094), ([[28, 178], [166, 178], [166, 202], [28, 202]], 'K< veikia biologai?', 0.17756545543670654), ([[43, 203], [421, 203], [421, 222], [43, 222]], 'Zmones nuo seniausiu laiky domejosi supanciu gyvuoju pasauliu,', 0.0006288232980296016), ([[31, 221], [389, 221], [389, 239], [31, 239]], 'Ilgainiui jie pradejo suprasti, kad siame pasaulyje viskas vyksta', 0.003855564398691058), ([[386.51341170750567, 224.6620705367551], [422.7052025048219, 219.95487588414142], [425.48658829249433, 236.3379294632449], [388.2947974951781, 241.04512411585858]], 'pagal', 0.9623101353645325), ([[31, 239], [423, 239], [423, 255], [31, 255]], 'tam tikras taisykles kurios vadinamos desniais. Kaupiantis zinioms apie', 0.017831942066550255), ([[271, 254], [423, 254], [423, 273], [271, 273]], 'tiria ne tik gyvojo pasaulio', 0.0962921604514122), ([[31, 255], [257, 255], [257, 273], [31, 273]], 'gyvybe. atsirado mokslo saka biologija.', 0.025824613869190216), ([[30, 271], [131, 271], [131, 290], [30, 290]], 'desningumus. bet', 0.5541052222251892), ([[138, 271], [423, 271], [423, 289], [138, 289]], 'organizmus, jy sandara, lunkcijas, tarpusavio rysius', 0.003894851775839925), ([[41, 289], [87, 289], [87, 305], [41, 305]], 'saveika', 0.7565147280693054), ([[101, 289], [149, 289], [149, 305], [101, 305]], 'aplinka,', 0.24946923553943634), ([[43, 303], [421, 303], [421, 321], [43, 321]], 'Gyv:jipasauljtiriantys mokslininkai vadinami biologais. Jie dirba la-', 0.008775383234024048), ([[31, 319], [419, 319], [419, 340], [31, 340]], 'boratorijose, allieka sudetingus tyrimus (2-4 pav), taip pat rengia eks', 0.0061713932082057), ([[30, 337], [423, 337], [423, 355], [30, 355]], 'pedicijas, tiria gyvybe toliiausiuose krastuose: nuo Alrikos dykunu iki', 0.010948325507342815), ([[99, 354], [243, 354], [243, 374], [99, 374]], 'ledyny. Biologijos tyrimy', 0.37014704942703247), ([[335, 355], [423, 355], [423, 369], [335, 369]], 'todel skirianos', 0.4670536518096924), ([[31, 357], [99, 357], [99, 369], [31, 369]], 'Antaristidas', 0.119281105697155), ([[243, 357], [305, 357], [305, 369], [243, 369]], 'sritis lanal', 0.21409060060977936), ([[303, 357], [335, 357], [335, 371], [303, 371]], 'plati,', 0.9188085198402405), ([[31, 371], [291, 371], [291, 389], [31, 389]], 'biologijos @akos. Issamiau jos aprasytos greta.', 0.01886424422264099)]
+Zeme
+vienintele Visatoje mums zinoma vieta, kur yra gyvybe. Galbut
+kitose planetose irgi esamna gyvujy organizmnu, taciau jie dar neatrasti.
+Mokslininkai tikisi, kad gal pavyks gyvybe aptikti Marse. Deja
+kol kas
+jy lukesciai neissipilde.
+leskantiems
+kitose planetose mokslininkams pirmiausia rupi
+gyvyhes
+jose yra vandens
+pav matyti, kad Pasaulio vandenynas dengia di-
+desne Zemes rutulio dalj, Mazdaug pries 3,8 mlrd. metu jame susidare
+pirmieji gyvieji organizmai. Veliau jie isplito sausumoje, paskui pakilo
+isiviespatavo visoje planeloje.
+K< veikia biologai?
+Zmones nuo seniausiu laiky domejosi supanciu gyvuoju pasauliu,
+Ilgainiui jie pradejo suprasti, kad siame pasaulyje viskas vyksta
+pagal
+tam tikras taisykles kurios vadinamos desniais. Kaupiantis zinioms apie
+tiria ne tik gyvojo pasaulio
+gyvybe. atsirado mokslo saka biologija.
+desningumus. bet
+organizmus, jy sandara, lunkcijas, tarpusavio rysius
+saveika
+aplinka,
+Gyv:jipasauljtiriantys mokslininkai vadinami biologais. Jie dirba la-
+boratorijose, allieka sudetingus tyrimus (2-4 pav), taip pat rengia eks
+pedicijas, tiria gyvybe toliiausiuose krastuose: nuo Alrikos dykunu iki
+ledyny. Biologijos tyrimy
+todel skirianos
+Antaristidas
+sritis lanal
+plati,
+biologijos @akos. Issamiau jos aprasytos greta.
