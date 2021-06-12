@@ -18,7 +18,8 @@ def rotate(image):
 	    angle = 90 - angle
 	else:
 	    angle = -angle
-
+	if angle ==0:
+		return (image, angle)
 	(h, w) = image.shape[:2]
 	center = (w // 2, h // 2)
 	M = cv2.getRotationMatrix2D(center, angle, 1.0)
@@ -28,9 +29,9 @@ def rotate(image):
 	#	(10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 0, 255), 2)
 
 	print("angle: {:.3f}".format(angle))
-	cv2.imshow("Input", image)
-	cv2.imshow("Rotated", rotated)
-	cv2.waitKey(0)
+	#cv2.imshow("Input", image)
+	#cv2.imshow("Rotated", rotated)
+	#cv2.waitKey(0)
 	return (rotated, angle)
 
 #print(rotate(image))
