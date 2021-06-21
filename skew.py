@@ -3,7 +3,7 @@ import numpy as np
 from PIL import Image as im
 from scipy.ndimage import interpolation as inter
 
-PATH = "img.png"
+PATH = r"C:\Users\jokub\Desktop\Work\git_rep_ocr\extras\tests\IMG_0771.jpg"
 
 #img = cv2.imread(PATH,0)
 img = im.open(PATH)

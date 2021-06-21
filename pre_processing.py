@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-PATH = r"C:\Users\jokub\Desktop\Work\git_rep_ocr\extras\tests\0.png"
+PATH = r"C:\Users\jokub\Desktop\Work\git_rep_ocr\extras\tests\IMG_0771.jpg"
 
 img = cv2.imread(PATH)
 
