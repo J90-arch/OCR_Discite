@@ -1,7 +1,8 @@
-import pypillowfight
-import cv2
+import pillowfight
+import PIL
 
-PATH = r"C:\Users\jokub\Desktop\Work\git_rep_ocr\extras\tests\IMG_0771.jpg"
-img = cv2.imread(PATH)
+PATH = r"test.jpg"
+in_img = PIL.Image.open(PATH)
 
-img_sl = pypillowfight.unpaper(img)
+out_img = pillowfight.ace(in_img)
+out_img.show()
