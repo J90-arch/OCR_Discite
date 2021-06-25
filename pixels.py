@@ -13,7 +13,8 @@ img = cv2.erode(img, kernel, iterations=1)
 img = cv2.GaussianBlur(img, (5, 5), 0)
 #img = cv2.threshold(img, 64, 256, cv2.THRESH_BINARY + cv2.THRESH_OTSU)[1]
 
-img = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,2) #imgf contains Binary image
+img = cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,7) #imgf contains Binary image
+#img = cv2.fastNlMeansDenoising(img, None, 10, 10, 7) 
 #cv2.imshow("img", img)
 #cv2.waitKey()
 #print(img.shape)
