@@ -40,7 +40,7 @@ def baseline_img(img):
     return edges
 
 # Find a horizontal line with most pixels in middle half of the image
-def find_whitest_line(img):
+def find_line_with_most_white_pixels(img):
     number_of_white_pixels = 0
     for i in range(len(img)//4,len(img)//4*3):
         num = np.sum(img[i] == 255)
@@ -50,17 +50,70 @@ def find_whitest_line(img):
     return line_with_most_white_pixels
 
 # Find first and last pixel in that line within 1/20 of image length to other white pixels
-def points(whitest_line):
-    for i in range(len(whitest_line)//20 , len(whitest_line)):
-        if whitest_line[i] == 255 and 255 in whitest_line[i:i+len(whitest_line)//20]:
+def points(line_with_most_white_pixels):
+    for i in range(len(line_with_most_white_pixels)//20 , len(line_with_most_white_pixels)):
+        if line_with_most_white_pixels[i] == 255 and 255 in line_with_most_white_pixels[i:i+len(line_with_most_white_pixels)//20]:
             First_white_pixel = i
             break
-    for i in range(First_white_pixel , len(whitest_line)):
-        if 255 not in whitest_line[i:i+len(whitest_line)//20]:
+    for i in range(First_white_pixel , len(line_with_most_white_pixels)):
+        if 255 not in line_with_most_white_pixels[i:i+len(line_with_most_white_pixels)//20]:
             Last_white_pixel = i-1
             break
-    Approx_centre = int((First_white_pixel + Last_white_pixel)/2)
-    return First_white_pixel,Last_white_pixel,Approx_centre
+    return First_white_pixel,Last_white_pixel
+
+def find_curve(img, First_white_pixel, Last_white_pixel, line_with_most_white_pixels):
+    # y=-c((x+2)^2-a*log(x+2))+b
+    counts = []
+    count = 0
+    A,B,C=0,0,0
+    for x in range(First_white_pixel+1, Last_white_pixel):
+        for y in range(line_with_most_white_pixels - len(img)//10, line_with_most_white_pixels):
+            #print(x,y)
+            
+            a,b,c = calc_parabola_constants(First_white_pixel, line_with_most_white_pixels, x, y, Last_white_pixel, line_with_most_white_pixels)
+            new_count = find_white_pixel_count_in_function(a,b,c,img)
+            counts.append(count)
+            if new_count > count:
+                count = new_count
+                A,B,C=a,b,c
+            
+            
+            
+    #print(counts)
+    return A,B,C
+
+def get_y_cord(a,b,c,x):
+    #return int(c*((x+2)**2-a*np.log(x+2))+b)
+    #print(f"x {x} y {a*(x**2) - b*x +c}")
+    return int(a*(x**2) - b*x +c)
+
+def find_white_pixel_count_in_function(a,b,c,img):
+    X = len(img[0])
+    Y = len(img)
+    y_cords = [get_y_cord(a,b,c,i) for i in range(len(img))]
+    x_cord = 0
+    count = 0
+    for item in y_cords:
+        #print(f"y {item} | x {x_cord}")
+        try:
+            if img[item][x_cord] == 255:
+                count+=1
+        except IndexError:
+            #print(f"dx{X-x_cord} | dy {Y-item}")
+            pass
+        x_cord+=1
+    print(f'count {count}')
+    return count
+
+def calc_parabola_constants(x1, y1, x2, y2, x3, y3):
+    denom = (x1-x2) * (x1-x3) * (x2-x3)
+    print(f"DENOM {denom} x1 {x1}, y1 {y1}, x2 {x2}, y2 {y2}, x3 {x3}, y3 {y3}")
+    A = (x3 * (y2-y1) + x2 * (y1-y3) + x1 * (y3-y2)) / denom
+    B = (x3*x3 * (y1-y2) + x2*x2 * (y3-y1) + x1*x1 * (y2-y3)) / denom
+    C = (x2 * x3 * (x2-x3) * y1+x3 * x1 * (x3-x1) * y2+x1 * x2 * (x1-x2) * y3) / denom
+    return A,B,C
+        
+
 
 def main():
     PATH = "test.jpg"
@@ -68,16 +121,37 @@ def main():
     img = baseline_img(img)
     # rgbimg has to be after baseline_img()
     rgbimg = cv2.imread('tmp.png')
-    line_with_most_white_pixels = find_whitest_line(img)  
-    First_white_pixel,Last_white_pixel,Approx_centre = points(img[line_with_most_white_pixels])
-    Approx_centre = int((First_white_pixel + Last_white_pixel)/2)
-    print(f'{First_white_pixel= } {Last_white_pixel= } {Approx_centre= }')
-    rgbimg[line_with_most_white_pixels] = [[255,0,0]] * len(rgbimg[0])
-    for i in range(len(rgbimg)):
-        rgbimg[i][Approx_centre] = [255,0,0]
+    line_with_most_white_pixels = find_line_with_most_white_pixels(img)  
+    First_white_pixel,Last_white_pixel = points(img[line_with_most_white_pixels])
+    print(f'{First_white_pixel= } {Last_white_pixel= }')
+    
+
+
+
+    #for i in range(line_with_most_white_pixels-7 , line_with_most_white_pixels+8):
+    #    rgbimg[i][First_white_pixel] = [0,255,0]
+    #    rgbimg[i][Last_white_pixel] = [0,255,0]
+
+    #rgbimg[line_with_most_white_pixels][First_white_pixel-7:First_white_pixel+8] = [[0,255,0]]*15
+    #rgbimg[line_with_most_white_pixels][Last_white_pixel-7:Last_white_pixel+8] = [[0,255,0]]*15
+    
+    #rgbimg[line_with_most_white_pixels] = [[255,0,0]] * len(rgbimg[0])
+    
+    a,b,c = find_curve(img, First_white_pixel,Last_white_pixel,line_with_most_white_pixels)
+
+    y_cords = [get_y_cord(a,b,c,i) for i in range(len(img[0]))]
+    x_cords = [i for i in range(len(img[0]))]
+
+    for x, y in zip(x_cords, y_cords):
+        try:
+            rgbimg[y][x] = [0,0,255]
+        except:
+            break
     plt.imshow(rgbimg,cmap = 'gray')
     plt.show()
     os.remove('tmp.png')
+    
+    print(find_white_pixel_count_in_function(a,b,c,img))
 
 if __name__ == "__main__":
     main()
