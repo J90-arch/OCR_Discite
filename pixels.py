@@ -1,4 +1,5 @@
 import os
+import math
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
@@ -50,7 +51,7 @@ def find_line_with_most_white_pixels(img):
     return line_with_most_white_pixels
 
 # Find first and last pixel in that line within 1/20 of image length to other white pixels
-def points(line_with_most_white_pixels):
+def points(line_with_most_white_pixels):#array of line of image
     for i in range(len(line_with_most_white_pixels)//20 , len(line_with_most_white_pixels)):
         if line_with_most_white_pixels[i] == 255 and 255 in line_with_most_white_pixels[i:i+len(line_with_most_white_pixels)//20]:
             First_white_pixel = i
@@ -61,97 +62,171 @@ def points(line_with_most_white_pixels):
             break
     return First_white_pixel,Last_white_pixel
 
-def find_curve(img, First_white_pixel, Last_white_pixel, line_with_most_white_pixels):
-    # y=-c((x+2)^2-a*log(x+2))+b
-    counts = []
-    count = 0
-    A,B,C=0,0,0
-    for x in range(First_white_pixel+1, Last_white_pixel):
-        for y in range(line_with_most_white_pixels - len(img)//10, line_with_most_white_pixels):
-            #print(x,y)
-            
-            a,b,c = calc_parabola_constants(First_white_pixel, line_with_most_white_pixels, x, y, Last_white_pixel, line_with_most_white_pixels)
-            new_count = find_white_pixel_count_in_function(a,b,c,img)
-            counts.append(count)
-            if new_count > count:
-                count = new_count
-                A,B,C=a,b,c
-            
-            
-            
-    #print(counts)
-    return A,B,C
 
-def get_y_cord(a,b,c,x):
-    #return int(c*((x+2)**2-a*np.log(x+2))+b)
-    #print(f"x {x} y {a*(x**2) - b*x +c}")
-    return int(a*(x**2) - b*x +c)
-
-def find_white_pixel_count_in_function(a,b,c,img):
+def P0_P2(line_with_most_white_pixels, img):
     X = len(img[0])
     Y = len(img)
-    y_cords = [get_y_cord(a,b,c,i) for i in range(len(img))]
-    x_cord = 0
+    for i in range(line_with_most_white_pixels, line_with_most_white_pixels+Y//5):
+        #if 255 in [a[X//15] for a in img[i-5: i+5]] and 255 not in [a[X//15] for a in img[i-len(line_with_most_white_pixels)//25:i]]:
+        if 255 in img[i][(X//10)-10:(X//10)+10]:
+            P0_y = i
+            break
+    for i in range(line_with_most_white_pixels, line_with_most_white_pixels+Y//5):
+        #if 255 in [a[-X//15] for a in img[i-5: i+5]] and 255 not in [a[-X//15] for a in img[i-len(line_with_most_white_pixels)//25:i]]:
+        if 255 in img[i][(5*X//8)-10:(5*X//8)+10] :
+            P2_y = i
+            break
+
+    P0, P2 = np.array([[X//10, P0_y],[5*X//8, P2_y]])
+    return P0, P2
+
+
+
+def find_curve(img, First_white_pixel, Last_white_pixel, line_with_most_white_pixels, P0, P2):
     count = 0
-    for item in y_cords:
-        #print(f"y {item} | x {x_cord}")
-        try:
-            if img[item][x_cord] == 255:
-                count+=1
-        except IndexError:
-            #print(f"dx{X-x_cord} | dy {Y-item}")
-            pass
-        x_cord+=1
-    print(f'count {count}')
-    return count
+    best_P1 = np.array([0, 0])
+    for x in range(First_white_pixel+1, Last_white_pixel, 10):#delete 10 later
+        for y in range(line_with_most_white_pixels - (len(img)//10), line_with_most_white_pixels, 10):
+            print(f'x {x-First_white_pixel} out of {Last_white_pixel-First_white_pixel} y {y-line_with_most_white_pixels + (len(img)//10)} out of {(len(img)//10)}')
+            P1 = np.array([x, y])
+            new_count = find_white_pixel_count_in_function(img, P0, P1, P2)
+            if new_count > count:
+                count = new_count
+                best_P1 = P1
 
-def calc_parabola_constants(x1, y1, x2, y2, x3, y3):
-    denom = (x1-x2) * (x1-x3) * (x2-x3)
-    print(f"DENOM {denom} x1 {x1}, y1 {y1}, x2 {x2}, y2 {y2}, x3 {x3}, y3 {y3}")
-    A = (x3 * (y2-y1) + x2 * (y1-y3) + x1 * (y3-y2)) / denom
-    B = (x3*x3 * (y1-y2) + x2*x2 * (y3-y1) + x1*x1 * (y2-y3)) / denom
-    C = (x2 * x3 * (x2-x3) * y1+x3 * x1 * (x3-x1) * y2+x1 * x2 * (x1-x2) * y3) / denom
-    return A,B,C
-        
-
-
-def main():
-    PATH = "test.jpg"
-    img = cv2.imread(PATH, 0)
-    img = baseline_img(img)
-    # rgbimg has to be after baseline_img()
-    rgbimg = cv2.imread('tmp.png')
-    line_with_most_white_pixels = find_line_with_most_white_pixels(img)  
-    First_white_pixel,Last_white_pixel = points(img[line_with_most_white_pixels])
-    print(f'{First_white_pixel= } {Last_white_pixel= }')
-    
+    #print(counts)
+    return best_P1
 
 
 
-    #for i in range(line_with_most_white_pixels-7 , line_with_most_white_pixels+8):
-    #    rgbimg[i][First_white_pixel] = [0,255,0]
-    #    rgbimg[i][Last_white_pixel] = [0,255,0]
-
-    #rgbimg[line_with_most_white_pixels][First_white_pixel-7:First_white_pixel+8] = [[0,255,0]]*15
-    #rgbimg[line_with_most_white_pixels][Last_white_pixel-7:Last_white_pixel+8] = [[0,255,0]]*15
-    
-    #rgbimg[line_with_most_white_pixels] = [[255,0,0]] * len(rgbimg[0])
-    
-    a,b,c = find_curve(img, First_white_pixel,Last_white_pixel,line_with_most_white_pixels)
-
-    y_cords = [get_y_cord(a,b,c,i) for i in range(len(img[0]))]
-    x_cords = [i for i in range(len(img[0]))]
-
+def find_white_pixel_count_in_function(img, P0, P1, P2):
+    P = lambda t: (1 - t)**2 * P0 + 2 * t * (1 - t) * P1 + t**2 * P2
+    x_length = len(img[0])
+    coords = np.array([P(t) for t in np.linspace(0, 1, x_length)])
+    x_cords, y_cords = coords[:,0], coords[:,1]
+    x_cords = [int(math.floor(a)) for a in x_cords]
+    y_cords = [int(math.floor(a)) for a in y_cords]
+    '''
+    rgbimg = img
     for x, y in zip(x_cords, y_cords):
         try:
-            rgbimg[y][x] = [0,0,255]
+            rgbimg[y][x] = [0,255,255]
         except:
             break
     plt.imshow(rgbimg,cmap = 'gray')
     plt.show()
-    os.remove('tmp.png')
+    '''
+    tmp_list = []
+    count = 0
+    for x, y in zip(x_cords, y_cords):
+        try:
+            tmp_list.append(img[y][x])
+            if img[y][x] == 255:
+                count+=1
+        except IndexError:
+            pass
+    #print(f'list {tmp_list}')
+    #print(f'count {count}')
+    return count
+
+        
+
+
+def main():
+    # define bezier curve
+    P = lambda t: (1 - t)**2 * P0 + 2 * t * (1 - t) * P1 + t**2 * P2
+    PATH = "test.jpg"
+    og_img = cv2.imread(PATH, cv2.IMREAD_GRAYSCALE)
+    img = baseline_img(og_img)
+    # rgbimg has to be after baseline_img()
+    rgbimg = cv2.imread('tmp.png')
+    line_with_most_white_pixels = find_line_with_most_white_pixels(img)  
+    First_white_pixel, Last_white_pixel = points(img[line_with_most_white_pixels])
     
-    print(find_white_pixel_count_in_function(a,b,c,img))
+    #for i in range(line_with_most_white_pixels-7 , line_with_most_white_pixels+8):
+    #    rgbimg[i][First_white_pixel] = [0,255,0]
+    #    rgbimg[i][Last_white_pixel] = [0,255,0]
+    #rgbimg[line_with_most_white_pixels][First_white_pixel-7:First_white_pixel+8] = [[0,255,0]]*15
+    #rgbimg[line_with_most_white_pixels][Last_white_pixel-7:Last_white_pixel+8] = [[0,255,0]]*15
+    #rgbimg[line_with_most_white_pixels] = [[255,0,0]] * len(rgbimg[0])
+    P0, P2 = P0_P2(line_with_most_white_pixels, img)
+    P1 = find_curve(img, First_white_pixel,Last_white_pixel,line_with_most_white_pixels, P0, P2)
+
+    P = lambda t: (1 - t)**2 * P0 + 2 * t * (1 - t) * P1 + t**2 * P2
+    x_length = len(img[0])
+    cords = np.array([P(t) for t in np.linspace(-0.5, 1.5, 2*x_length)])
+    x_cords, y_cords = cords[:,0], cords[:,1]
+    x_cords = [int(math.floor(a)) for a in x_cords]
+    y_cords = [int(math.floor(a)) for a in y_cords]
+
+    #for x, y in zip(x_cords, y_cords):
+    #    try:
+    #        rgbimg[y][x] = [255,255,255]
+    #    except:
+    #        break
+    
+    first_x, last_x = x_cords.index(0), x_cords.index(len(img[0]))
+
+    x_cords = x_cords[first_x:last_x]
+    y_cords = y_cords[first_x:last_x]
+
+
+    
+
+    show_img = np.array(cv2.resize(og_img, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC))
+    i = 0
+    while(i < show_img.shape[1]-1):
+        if x_cords[i+1] == x_cords[i]:
+            del x_cords[i+1]
+            del y_cords[i+1]
+        else:
+            i+=1
+    if x_cords[-1] == x_cords[-2]:
+        del x_cords[-1]
+        del y_cords[-1]
+    if x_cords[-1] == show_img.shape[1]:
+        del x_cords[-1]
+        del y_cords[-1]
+
+    plt.imshow(show_img, cmap='gray')
+    plt.plot(*P0, 'r.')
+    plt.plot(*P1, 'r.')
+    plt.plot(*P2, 'r.')
+    plt.text(*P0, "P0",color="red")
+    plt.text(*P1, "P1",color="red")
+    plt.text(*P2, "P2",color="red")
+    #plt.plot([0, 3000], [line_with_most_white_pixels, line_with_most_white_pixels])
+    
+    os.remove('tmp.png')
+    plt.plot(x_cords, y_cords, 'r')
+    plt.show()
+
+    print(y_cords, show_img.shape)
+    for a,b in zip(x_cords[1:], x_cords[:-1]):
+        if a-b !=1:
+            print(a-b)
+    
+    max_H = max(y_cords)
+    print(f'max {max_H}')
+    print(show_img)
+    np.rot90(show_img)
+    img_output = np.zeros([show_img.shape[0]+max_H,show_img.shape[1]], dtype=img.dtype)
+    print(f'shape{img_output.shape} old {show_img.shape}')
+    for y in range(show_img.shape[0]):
+        for x in range(show_img.shape[1]):
+            #print(f'h {y_cords[x]}')
+            img_output[max_H + y - y_cords[x]][x] = show_img[y][x]
+    #np.rot90[img_output, 3]
+    plt.imshow(img_output)
+    plt.show()
+    #img_output = cv2.adaptiveThreshold(img_output,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,cv2.THRESH_BINARY,11,7)
+    kernel = np.ones((1, 1), np.uint8)
+    show_img = cv2.dilate(show_img, kernel, iterations=1)
+    show_img = cv2.erode(show_img, kernel, iterations=1)
+    show_img = cv2.GaussianBlur(show_img, (5, 5), 0)
+    cv2.imwrite("img_output.jpg", img_output)
+
+
 
 if __name__ == "__main__":
     main()
