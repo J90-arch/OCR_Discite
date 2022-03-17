@@ -125,8 +125,6 @@ def main():
     DEBUG = args.debug
     og_img = cv2.imread(PATH, cv2.IMREAD_GRAYSCALE)
     img = baseline_img(og_img)
-    # rgbimg has to be after baseline_img()
-    rgbimg = cv2.imread('tmp.png')
     line_with_most_white_pixels = find_line_with_most_white_pixels(img)  
     First_white_pixel, Last_white_pixel = points(img[line_with_most_white_pixels])
     a, m, n = find_curve(img, line_with_most_white_pixels, First_white_pixel, Last_white_pixel)
