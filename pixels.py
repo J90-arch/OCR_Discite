@@ -1,9 +1,13 @@
+#!/usr/bin/env python3
 import os
 import math
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+
+DEBUG = True
+
 ###Code currently is held together by ducktape, so expect it to break
 def baseline_img(img):
     img = cv2.resize(img, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
@@ -94,15 +98,18 @@ def find_curve(img, line_with_most_white_pixels, First_white_pixel, Last_white_p
     #max_a = min(((len(img)-1)-n)/(m**2), ((len(img)-1)-n)/((len(img[0])-1-m)**2))
     max_n = line_with_most_white_pixels
     n_list = np.arange(0.0, max_n, 0.01)
+    cnt_since_last_change = 0
     for n in n_list[::-1]:
+        cnt_since_last_change+=1
         new_a = (line_with_most_white_pixels - n)/((((Last_white_pixel-First_white_pixel)**2)/4))
         if F(0,new_a,m,n)>len(img) or F(len(img[0]), new_a,m,n)>len(img):
             pass
         else: 
             a = new_a
             cnt = find_white_pixel_count_in_function(img, a, m, n)
-            if cnt > best_cnt:
-                print(f'best_count {cnt} => {best_cnt}')
+            if cnt > best_cnt and cnt_since_last_change<20:
+                cnt_since_last_change = 0
+                print(f'best_count {cnt} => {best_cnt}, a {a}')
                 best_n = n
                 best_a = a
                 best_cnt = cnt
@@ -110,7 +117,7 @@ def find_curve(img, line_with_most_white_pixels, First_white_pixel, Last_white_p
     
 
 def main():
-    PATH = "test.jpg"
+    PATH = "IMG_2714.jpg"
     og_img = cv2.imread(PATH, cv2.IMREAD_GRAYSCALE)
     img = baseline_img(og_img)
     # rgbimg has to be after baseline_img()
@@ -118,39 +125,42 @@ def main():
     line_with_most_white_pixels = find_line_with_most_white_pixels(img)  
     First_white_pixel, Last_white_pixel = points(img[line_with_most_white_pixels])
     a, m, n = find_curve(img, line_with_most_white_pixels, First_white_pixel, Last_white_pixel)
-    print(f'{a = } {m = } {n = }')
     show_img = np.array(cv2.resize(og_img, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC))
 
-    
-    plt.plot([i for i in range(0, len(img[0]))],[line_with_most_white_pixels for item in img[0]], 'r')
-    plt.plot([First_white_pixel for item in img[0]],[i for i in range(0, len(img[0]))],'r')
-    plt.plot([Last_white_pixel for item in img[0]],[i for i in range(0, len(img[0]))],'r')
-    x_cords = [i for i in range(0, len(img[0]))]
-    y_cords = [F(x,a,m,n) for x in range(0, len(img[0]))]
-    plt.plot(x_cords,y_cords,'b')
-    plt.imshow(show_img, cmap='gray')
-    os.remove('tmp.png')
-    plt.show()
-    output_height = int(len(img) + F(len(img[0]),a,m,n) - F(m,a,m,n) + 1)
-    output_height_increase = F(m,a,m,n)
-    output_length = int(len(img[0]))
+    if DEBUG:
+        plt.plot([i for i in range(0, len(img[0]))],[line_with_most_white_pixels for item in img[0]], 'r')
+        plt.plot([First_white_pixel for item in img[0]],[i for i in range(0, len(img[0]))],'r')
+        plt.plot([Last_white_pixel for item in img[0]],[i for i in range(0, len(img[0]))],'r')
+        x_cords = [i for i in range(0, len(img[0]))]
+        y_cords = [F(x,a,m,n) for x in range(0, len(img[0]))]
+        plt.plot(x_cords,y_cords,'b')
+        plt.imshow(show_img, cmap='gray')
+        
+        plt.show()
+    ############# F(x, a, m, n)
+    output_height_increase = max(F(len(show_img[0]),a,m,n), F(0,a,m,n))-F(m,a,m,n)
+    output_height = int(len(show_img)) + output_height_increase
+    output_length = int(len(show_img[0]))
     img_output = []
-    img_output = [[[255, 255, 255]]*output_length for i in range(output_height)]
-    print(f'{output_height = } {output_length = }')
-    print(f'{len(img_output) = } {len(img_output[0]) = }')
+    #print(f'{len(img_output) = } {len(img_output[0]) = }')
     mono_img = cv2.imread("test-mono.jpg")
-    os.remove("test-mono.jpg")
-    print(f'{output_height_increase = }')
-    for i in range(len(img[0])):
-        d = int(F(i,a,m,n))
-        for j in range(len(img)):
+    if not DEBUG:
+        os.remove('tmp.png')
+        os.remove("test-mono.jpg")
+    img_output = [[[255, 255, 255]]*output_length for i in range(output_height)]
+    img_from = mono_img
+    A = +F(n,a,m,n) + output_height_increase
+    for i in range(int(len(img_from[0]))):
+        d = int(A-F(i,a,m,n))
+        for j in range(int(len(img_from))):
             try:
-                img_output[j-d+2*output_height_increase][i] = mono_img[j][i]
-            except:
+                img_output[j+d][i] = img_from[j][i]
+            except IndexError:
                 pass
     plt.imshow(img_output)
     plt.show()
     cv2.imwrite("img_output.jpg", np.array(img_output))
+    print(f'{len(img_output)=} {len(img_output[0])=} {len(show_img)=} {len(show_img[0])=}')
 
 if __name__ == "__main__":
     main()
