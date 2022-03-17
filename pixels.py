@@ -5,8 +5,8 @@ from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
+import argparse
 
-DEBUG = True
 
 ###Code currently is held together by ducktape, so expect it to break
 def baseline_img(img):
@@ -117,7 +117,12 @@ def find_curve(img, line_with_most_white_pixels, First_white_pixel, Last_white_p
     
 
 def main():
-    PATH = "IMG_2714.jpg"
+    ap = argparse.ArgumentParser(description="Program to preprocess images")
+    ap.add_argument("image", help="image path")
+    ap.add_argument("-d", "--debug", action="store_true", help="debug")
+    args = ap.parse_args()
+    PATH = args.image
+    DEBUG = args.debug
     og_img = cv2.imread(PATH, cv2.IMREAD_GRAYSCALE)
     img = baseline_img(og_img)
     # rgbimg has to be after baseline_img()
