@@ -6,4 +6,4 @@ pixels.py can decurve text in photos
 
 all development is done on linux, so there may be some issues on windows
 
-This is a part of Discite  OCR development
+This is a part of Bloop OCR development
